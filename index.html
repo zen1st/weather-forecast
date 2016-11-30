@@ -17,21 +17,18 @@ var metric = true;
 function toMetric()
 {
 document.getElementById("tempID").innerHTML = "Temperature (Celsius)";
-
+metric = true;
 if (mode=="currentWeather")
 {
 displayCurrentWeather();
-metric = true;
 }
 else if(mode=="nextFiveDays")
 {
 displayNextFiveDays();
-metric = true;
 }
 else if(mode=="hourlyWeather")
 {
 displayHourly();
-metric = true;
 }
 }
 
@@ -39,20 +36,19 @@ function toImperial()
 {
 document.getElementById("tempID").innerHTML = "Temperature (Fahrenheit)";
 
+metric = false;
+
 if (mode=="currentWeather")
 {
 displayCurrentWeather();
-metric = false;
 }
 else if(mode=="nextFiveDays")
 {
 displayNextFiveDays();
-metric = false;
 }
 else if(mode=="hourlyWeather")
 {
 displayHourly();
-metric = false;
 }
 }
 
@@ -293,10 +289,10 @@ return "<img class=\"img-responsive\" src=\"snowflakes_PNG7545.png\" alt=\"Chani
   </div>
 </nav>
   
-<div class="container">
+<div class="container" style="background: white;">
   <h2>Weather Table</h2>
                 
-  <div class="table-responsive">          
+  <div class="table-responsive" >          
   <table class="table">
     <thead>
       <tr>
