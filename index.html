@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Case</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<script>
+
+var cityName;
+var mode;
+var metric = true;
+
+function toMetric()
+{
+document.getElementById("tempID").innerHTML = "Temperature (Celsius)";
+
+if (mode=="currentWeather")
+{
+displayCurrentWeather();
+metric = true;
+}
+else if(mode=="nextFiveDays")
+{
+displayNextFiveDays();
+metric = true;
+}
+else if(mode=="hourlyWeather")
+{
+displayHourly();
+metric = true;
+}
+}
+
+function toImperial()
+{
+document.getElementById("tempID").innerHTML = "Temperature (Fahrenheit)";
+
+if (mode=="currentWeather")
+{
+displayCurrentWeather();
+metric = false;
+}
+else if(mode=="nextFiveDays")
+{
+displayNextFiveDays();
+metric = false;
+}
+else if(mode=="hourlyWeather")
+{
+displayHourly();
+metric = false;
+}
+}
+
+function displayCurrentWeather()
+{
+	var xmlDoc;
+var txt;
+
+mode = "currentWeather";
+
+
+	cityName=document.getElementById("cityName").value;
+
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function() 
+	{
+		if (xhttp.readyState == 4 && xhttp.status == 200) 
+		{
+			xmlDoc= xhttp.responseXML;
+txt += "<tr>";
+
+txt += "<td>Today</td>";
+
+txt += "<td>" +	xmlDoc.getElementsByTagName("temperature")[0].getAttribute("value") + "</td>";
+
+txt += "<td>" +	xmlDoc.getElementsByTagName("speed")[0].getAttribute("value") + " " + xmlDoc.getElementsByTagName("direction")[0].getAttribute("code") + "</td>";
+
+txt += "<td>" +	xmlDoc.getElementsByTagName("humidity")[0].getAttribute("value") + xmlDoc.getElementsByTagName("humidity")[0].getAttribute("unit") + "</td>";
+
+txt += "<td>" +	xmlDoc.getElementsByTagName("weather")[0].getAttribute("value") + "</td>";
+
+txt += "<td>" + displayPicture(xmlDoc.getElementsByTagName("weather")[0].getAttribute("value")) + "</td>";
+
+txt += "</tr>";
+
+			document.getElementById("tableID").innerHTML = txt;
+		}
+	};
+
+if(metric)
+{
+xhttp.open("GET", "http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&units=metric&mode=xml&appid=bf79a76acd65607bbdb832c68da3a472", true);
+xhttp.send();
+}
+else
+{
+xhttp.open("GET", "http://api.openweathermap.org/data/2.5/weather?q="+cityName+"&units=imperial&mode=xml&appid=bf79a76acd65607bbdb832c68da3a472", true);
+xhttp.send();
+}
+
+}
+
+function displayNextFiveDays()
+{
+	var xmlDoc;
+	var txt;
+	mode = "nextFiveDays";
+
+	cityName=document.getElementById("cityName").value;
+
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function() 
+	{
+		if (xhttp.readyState == 4 && xhttp.status == 200) 
+		{
+			xmlDoc= xhttp.responseXML;
+
+			var x = xmlDoc.getElementsByTagName('time');
+			var i;
+
+			for (i = 0; i < x.length; i++) 
+			{ 
+			txt += "<tr>";
+			txt += "<td>" + x[i].getAttribute('day') + "</td>";
+			txt += "<td>" +	xmlDoc.getElementsByTagName("temperature")[i].getAttribute("day") + "</td>";
+			txt += "<td>" +	xmlDoc.getElementsByTagName("windSpeed")[i].getAttribute("mps") +" "+xmlDoc.getElementsByTagName("windDirection")[i].getAttribute("code") + "</td>";
+			txt += "<td>" +	xmlDoc.getElementsByTagName("humidity")[i].getAttribute("value") + xmlDoc.getElementsByTagName("humidity")[i].getAttribute("unit") + "</td>";
+			txt += "<td>" +	xmlDoc.getElementsByTagName("symbol")[i].getAttribute("name") + "</td>";
+
+			txt += "<td>" + displayPicture(xmlDoc.getElementsByTagName("symbol")[i].getAttribute("name")) + "</td>";
+
+			txt += "</tr>";
+			}
+
+			document.getElementById("tableID").innerHTML = txt; 
+		}
+	};
+
+	if(metric)
+	{
+		xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast/daily?q="+cityName+"&mode=xml&units=metric&cnt=5&appid=bf79a76acd65607bbdb832c68da3a472", true);
+		xhttp.send();
+	}
+	else
+	{
+		xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast/daily?q="+cityName+"&mode=xml&units=imperial&cnt=5&appid=bf79a76acd65607bbdb832c68da3a472", true);
+		xhttp.send();
+	}
+}
+
+function displayHourly()
+{
+	var xmlDoc;
+	var txt;
+	mode = "hourlyWeather";
+
+	cityName=document.getElementById("cityName").value;
+
+	var xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function() 
+	{
+		if (xhttp.readyState == 4 && xhttp.status == 200) 
+		{
+			xmlDoc= xhttp.responseXML;
+
+			var x = xmlDoc.getElementsByTagName('time');
+			var i;
+
+			for (i = 0; i < x.length; i++) 
+			{ 
+			txt += "<tr>";
+
+			txt += "<td>" + x[i].getAttribute('from') + " to " + x[i].getAttribute('to') + "</td>";
+
+			txt += "<td>" + xmlDoc.getElementsByTagName("temperature")[i].getAttribute("value") + "</td>";
+
+			txt += "<td>"+xmlDoc.getElementsByTagName("windSpeed")[i].getAttribute("mps") + " " +xmlDoc.getElementsByTagName("windDirection")[i].getAttribute("code") + "</td>";
+
+			txt += "<td>" + xmlDoc.getElementsByTagName("humidity")[i].getAttribute("value") + xmlDoc.getElementsByTagName("humidity")[i].getAttribute("unit") + "</td>";
+
+			txt += "<td>" + xmlDoc.getElementsByTagName("symbol")[i].getAttribute("name") + "</td>";
+
+			txt += "<td>" + displayPicture(xmlDoc.getElementsByTagName("symbol")[i].getAttribute("name")) + "</td>";
+
+			txt += "</tr>";
+
+			}
+
+			document.getElementById("tableID").innerHTML = txt; 
+		}
+	};
+
+	if(metric)
+	{
+		xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast?q="+cityName+"&mode=xml&appid=bf79a76acd65607bbdb832c68da3a472&units=metric", true);
+		xhttp.send();
+	}
+	else
+	{
+		xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast?q="+cityName+"&mode=xml&appid=bf79a76acd65607bbdb832c68da3a472&units=imperial", true);
+		xhttp.send();
+	}
+}
+
+function displayPicture(string)
+{
+if(string.toLowerCase().indexOf('clear') >= 0)
+{
+return "<img class=\"img-responsive\" src=\"ncEEjypai.gif\" alt=\"Chania\" width=\"100\" height=\"100\">";
+}
+else if(string.toLowerCase().indexOf('cloud') >= 0)
+{
+return "<img class=\"img-responsive\" src=\"cloud-clip-art-rgtaylor_csc_net_wan_cloud.png\" alt=\"Chania\" width=\"100\" height=\"100\">";
+}
+else if(string.toLowerCase().indexOf('rain') >= 0)
+{
+return "<img class=\"img-responsive\" src=\"rain-clip-art-RcdRg7eei.png\" alt=\"Chania\" width=\"100\" height=\"100\">";
+}
+else if(string.toLowerCase().indexOf('snow') >= 0)
+{
+return "<img class=\"img-responsive\" src=\"snowflakes_PNG7545.png\" alt=\"Chania\" width=\"100\" height=\"100\">";
+}
+}
+</script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+
+  <div class="container-fluid">
+
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">CPS630 Lab 02 - Zhe Zeng(500523574)</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="#" onclick="toMetric()">Metric</a></li>
+        <li><a href="#" onclick="toImperial()">Imperial</a></li>
+        <li><a href="#" onclick="displayCurrentWeather()">Current Forecast</a></li>
+        <li><a href="#" onclick="displayNextFiveDays()">Next 5 Days Forecast</a></li>
+        <li><a href="#" onclick="displayHourly()">Hourly Forecast</a></li>
+      </ul>
+    </div>
+
+<div class="form-group">
+	<input type="text" class="form-control" id="cityName" placeholder="Enter City Name Here" oninput="displayCurrentWeather()">
+</div>
+
+  </div>
+</nav>
+  
+<div class="container">
+  <h2>Weather Table</h2>
+                
+  <div class="table-responsive">          
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th id ="tempID">Temperature (Celsius)</th>
+        <th id ="windID">Wind</th>
+        <th>Humidity</th>
+        <th>Weather Condition</th>
+        <th>Weather Picture</th>
+      </tr>
+    </thead>
+
+    <tbody id ="tableID">
+    </tbody>
+
+  </table>
+  </div>
+</div>
+
+</body>
+</html>	
