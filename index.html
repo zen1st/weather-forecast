@@ -90,6 +90,9 @@ txt += "<td>" + displayPicture(xmlDoc.getElementsByTagName("weather")[0].getAttr
 txt += "</tr>";
 
 			document.getElementById("tableID").innerHTML = txt;
+			
+			
+			displayBackgroundPicture(xmlDoc.getElementsByTagName("weather")[0].getAttribute("value"));
 		}
 	};
 
@@ -210,6 +213,32 @@ function displayHourly()
 	}
 }
 
+
+function displayBackgroundPicture(string)
+{
+if(string.toLowerCase().indexOf('clear') >= 0)
+{
+document.body.style.backgroundImage = "url('tumblr_m6ltvk2pHg1r9bkeao1_500.gif')";
+document.body.style.backgroundSize = "cover";
+}
+else if(string.toLowerCase().indexOf('cloud') >= 0)
+{
+document.body.style.backgroundImage = "url('giphy.gif')";
+document.body.style.backgroundSize = "cover";
+}
+else if(string.toLowerCase().indexOf('rain') >= 0)
+{
+document.body.style.backgroundImage = "url('tumblr_nd36gwxSLe1si1p8jo1_500.gif')";
+document.body.style.backgroundSize = "cover";
+}
+else if(string.toLowerCase().indexOf('snow') >= 0)
+{
+document.body.style.backgroundImage = "url('black-and-white-gif-photography-sky-Favim.com-2334150.gif')";
+document.body.style.backgroundSize = "cover";
+}
+}
+
+
 function displayPicture(string)
 {
 if(string.toLowerCase().indexOf('clear') >= 0)
@@ -229,6 +258,7 @@ else if(string.toLowerCase().indexOf('snow') >= 0)
 return "<img class=\"img-responsive\" src=\"snowflakes_PNG7545.png\" alt=\"Chania\" width=\"100\" height=\"100\">";
 }
 }
+
 </script>
 </head>
 <body>
